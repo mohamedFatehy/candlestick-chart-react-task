@@ -1,70 +1,70 @@
-# Getting Started with Create React App
+# React Task for creating Candlestick Chart
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## pre requests
+- Node
+- npm
+- Text Editor or IDE
+- make sure that ports 3000,3001 are Free
 
-In the project directory, you can run:
+## How to make it work
 
-### `npm start`
+- clone the repo
+- run command `npm install`
+- make the proxy work
+    - go to directory proxy-server `cd proxy-server`
+    - run command `node proxy.js` to up the proxy server implemented in Node
+    - this Url suppose to be working after running the proxy http://localhost:3001/api/yahoo-finance?period1=1633381200&period2=1664917199&interval=1d&events=history&crumb=5YTX%2FgVGBmg
+- make the react app work
+    - run command `cd candlestick-chart-react-task`
+    - run command `npm start` this will open this react page http://localhost:3000/ 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Why we did what we did
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Issue number 1
+the given api is block by CORS, this issue usually fixed by allowing the origin localhost to send requests 
+but here we dont have any access to the backend behind the api
+so the alter solution that was applicable and also to show some knowledge of NodeJs is creating Proxy server for calling the financial api without being blocked 
+by CORS
+```
+ Access to fetch at 'https://query1.finance.yahoo.com/v7/finance/download/SPUS?period1=1633381200&period2=1664917199&interval=1d&events=history&crumb=5YTX%2FgVGBmg' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled
+```
+you can realize from the code that we are not calling this api direct instead we call the proxy api
+```
+http://localhost:3001/api/yahoo-finance?period1=1633381200&period2=1664917199&interval=1d&events=history&crumb=5YTX%2FgVGBmg
+```
 
-### `npm test`
+### Issue number 2
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### what is the suitable chart library?
 
-### `npm run build`
+this is hard question because there are many libraries like
+- Recharts
+- Chart.js
+- Highcharts
+- Victory
+- React Stockcharts
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+and much more libraries
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+but after looking for the popular ones i decided to choose `React Stockcharts`
+http://rrag.github.io/react-stockcharts/documentation.html
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+because it is highly customizable stock charts and focuses mainly on Financial chart as you can see from the documentation link above
 
-### `npm run eject`
+but while i was implementing it and searching more about it, i found even better libraries
+actually it is Fork form the same library but  renamed, converted to typescript and bug fixes applied due to the original project being unmaintained
+it's name is `react-financial-charts` from the name alone we can see it is giving much focus on Money Related charts and Financial stuff 
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+you can know more about the library and it's amazing charts you can visit
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+https://github.com/react-financial/react-financial-charts
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+https://react-financial.github.io/react-financial-charts/?path=/story/intro--page
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
+of course i didnt implement all the existing features of the library in that task but from it's website you can see it's amazing features that will be definitely
+great add for Fintech Company
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![Alt text](public/task.png "ScreenSor of the chart")
