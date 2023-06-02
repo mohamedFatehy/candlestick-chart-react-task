@@ -4,8 +4,20 @@ import { CandlestickSeries } from 'react-financial-charts/lib';
 import { XAxis, YAxis } from 'react-financial-charts/lib';
 import { discontinuousTimeScaleProvider } from 'react-financial-charts/lib';
 
-const CandlestickChart = ({ data, width, height, interval, from, to }) => {
+const CandlestickChart = ({ data, width, height, interval, from, to, onIntervalChange, onFromChange, onToChange }) => {
+  const handleIntervalChange = (e) => {
+    onIntervalChange(e.target.value);
+  };
 
+  const handleFromChange = (e) => {
+    onFromChange(e.target.value);
+  };
+
+  const handleToChange = (e) => {
+    onToChange(e.target.value);
+  };
+
+  // Configure the x-scale provider
   const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
       (d) => new Date(d.date)
   );
@@ -13,6 +25,24 @@ const CandlestickChart = ({ data, width, height, interval, from, to }) => {
 
   return (
       <div>
+        <div>
+          <label>
+            Interval:
+            <select value={interval} onChange={handleIntervalChange}>
+              <option value="1d">Day</option>
+              <option value="1wk">Week</option>
+              <option value="1mo">Month</option>
+            </select>
+          </label>
+          <label>
+            From:
+            <input type="datetime-local" value={from} onChange={handleFromChange} />
+          </label>
+          <label>
+            To:
+            <input type="datetime-local" value={to} onChange={handleToChange} />
+          </label>
+        </div>
         <ChartCanvas
             width={width}
             height={height}
@@ -36,14 +66,18 @@ const CandlestickChart = ({ data, width, height, interval, from, to }) => {
 
 const CandlestickChartPage = () => {
   const [data, setData] = useState([]);
+  const [interval, setInterval] = useState('1d');
+  const [from, setFrom] = useState('2021-10-04T09:00');
+  const [to, setTo] = useState('2022-01-29T16:13');
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [interval, from, to]);
 
   const fetchData = async () => {
     try {
       // Fetch data from API with the selected interval, from, and to dates
-      const response = await fetch(`http://localhost:3001/api/yahoo-finance?period1=1633381200&period2=1664917199&interval=1d&events=history&crumb=5YTX%2FgVGBmg `);
+      const response = await fetch(`http://localhost:3001/api/yahoo-finance?interval=${interval}&period1=${new Date(from).getTime() / 1000}&period2=${new Date(to).getTime() / 1000}&events=history&crumb=5YTX%2FgVGBmg`);
       const jsonData = await response.json();
       setData(jsonData);
     } catch (error) {
@@ -55,6 +89,13 @@ const CandlestickChartPage = () => {
     setInterval(selectedInterval);
   };
 
+  const handleFromChange = (selectedFrom) => {
+    setFrom(selectedFrom);
+  };
+
+  const handleToChange = (selectedTo) => {
+    setTo(selectedTo);
+  };
 
   return (
       <div>
@@ -64,7 +105,12 @@ const CandlestickChartPage = () => {
                 data={data}
                 width={1600}
                 height={750}
+                interval={interval}
+                from={from}
+                to={to}
                 onIntervalChange={handleIntervalChange}
+                onFromChange={handleFromChange}
+                onToChange={handleToChange}
             />
         ) : (
             <p>Loading data...</p>
