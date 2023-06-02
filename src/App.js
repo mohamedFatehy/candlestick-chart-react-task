@@ -5,7 +5,7 @@ import { XAxis, YAxis } from 'react-financial-charts/lib';
 import { discontinuousTimeScaleProvider } from 'react-financial-charts/lib';
 
 const CandlestickChart = ({ data, width, height, interval, from, to }) => {
-  // Configure the x-scale provider
+
   const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
       (d) => new Date(d.date)
   );
@@ -41,12 +41,14 @@ const CandlestickChartPage = () => {
   }, []);
 
   const fetchData = async () => {
-    setData([
-      { date: new Date(2022, 0, 1), open: 100, high: 120, low: 80, close: 110, volume: 1000 },
-      { date: new Date(2022, 0, 2), open: 110, high: 130, low: 90, close: 120, volume: 1500 },
-      { date: new Date(2022, 0, 3), open: 120, high: 140, low: 100, close: 130, volume: 2000 },
-      // Add more data points as needed
-    ]);
+    try {
+      // Fetch data from API with the selected interval, from, and to dates
+      const response = await fetch(`http://localhost:3001/api/yahoo-finance?period1=1633381200&period2=1664917199&interval=1d&events=history&crumb=5YTX%2FgVGBmg `);
+      const jsonData = await response.json();
+      setData(jsonData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   const handleIntervalChange = (selectedInterval) => {
